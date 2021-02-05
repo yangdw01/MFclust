@@ -36,41 +36,28 @@ getSplineInfo = function(tau, KNOTS=20, intKnots = NULL){
 }
 
 # Preda
-n1 <- round(n/5)
-n2 <- round(n/5)
-n3 <- round(n/5)
-n4 <- round(n/5)
-n5 <- n-n1-n2-n3-n4
+n1 <- round(n/3)
+n2 <- round(n/3)
+n3 <- n-n1-n2
 te <- seq(0,1,length.out = ss) #seq(1,21,0.05)
 
 # observation numbers
 nobs1 <- nobs2 <- nobs3 <- rep(length(te),n) #sample(40:60, n, replace=TRUE)
 nobs <- list(nobs1, nobs2, nobs3)
 
-p <- 8
+p <- 7
 Xdat <- matrix(NA, p, n)
 
 q <-3
 Zdat <- matrix(NA, q, n)
 
 
-# fval1 <- 2*log( te + 1/10 )
-# fval2 <- 4*cos(5*te)+2
-# fval3 <- exp(te)
-# fval4 <- tan(te+1/4)
-# fval5 <- 5*te^3 + 1
-# fval6 <-3*sin( 3*te + 1/3 ) - 1
-
-
-fval1 <- 2*log( te + 1/10 )+2
-fval2 <- 5/2*cos(5*te)+2 - 3/2
+fval1 <- 2*log( te + 1/10 )
+fval2 <- 4*cos(5*te)+2
 fval3 <- exp(te)
-fval4 <- tan(te+1/3)
-fval5 <- 5*sin( 3*te + 1/2 ) - 2
-fval6 <- te^3 - 3*te^2
-
-
-
+fval4 <- tan(te+1/4)
+fval5 <- 5*te^3 + 1
+fval6 <-3*sin( 3*te + 1/3 ) - 1
 fval7 <- te^2 - 5*te^4
 fval8 <- exp(2*te^2)
 fval9 <- 5*cos( 5*te^3+4.5 )
@@ -97,7 +84,7 @@ lines(te, fval3, col=4)
 
 ylim <- quantile( c(fval4, fval5, fval6), c(0,1) )
 
-plot(te, fval4, type='l', ylim=ylim, col=2)
+plot(te, fval5, type='l', ylim=ylim, col=2)
 lines(te, fval5, col=3)
 lines(te, fval6, col=4)
 
@@ -109,7 +96,7 @@ lines(te, fval9, col=4)
 
 
 
-truezs <- c( rep(1,n1), rep(2, n2), rep(3,n3), rep(4,n4), rep(5,n5) )
+truezs <- c( rep(1,n1), rep(2, n2), rep(3,n3) )
 
 Ymean1 <- Ymean2 <- Ymean3 <- matrix(NA, length(te), n)
 for(i in 1:n){
@@ -125,21 +112,13 @@ for(i in 1:n){
   # tempu8 <- rnorm(1,    ifelse( zi==3, 1, 0 ),  1)
   # tempu9 <- rnorm(1,    (zi+2),  1)
 
-  # tempu1 <- rnorm(1,    (zi+1),  1.1)
-  # tempu2 <- rnorm(1,    ifelse( zi==2, 1, 0 ),  1.1)
-  # tempu3 <- rnorm(1,    (5-zi),  1.1)
-  # tempu4 <- rnorm(1,    ifelse( zi==3, 1, 0 ),  1.1) 
-  # tempu5 <- rnorm(1,    (zi+2),  1.1) 
-  # tempu6 <- rnorm(1,    (5-zi),  1.1)
-  
-  tempu1 <- rnorm(1,    (zi+1),  1.2)
-  tempu2 <- rnorm(1,    ifelse( (zi==2||zi==3), -zi+5+1, 0 ) + ifelse( (zi!=2&&zi!=3), zi+1, 0 ),  1.2)
-  tempu3 <- rnorm(1,    (6-zi),  1.5)
-  tempu4 <- rnorm(1,    (6-zi),  1.2)
-  tempu5 <- rnorm(1,    (zi-2),  1.2)
-  tempu6 <- rnorm(1,    ifelse( (zi==2||zi==3), -zi+5+1, 0 ) + ifelse( (zi!=2&&zi!=3), zi+1, 0 ),  1.5)
-  tempu8 <- rnorm(1,    (zi+2),  1.2)
-  tempu9 <- rnorm(1,    (zi-2),  1.2)
+  tempu1 <- rnorm(1,    (zi+1),  1)
+  tempu2 <- rnorm(1,    ifelse( zi==2, 2, 0 ),  1.5)
+  tempu3 <- rnorm(1,    (5-zi),  1)
+  tempu5 <- rnorm(1,    (zi+2),  1) #rnorm(1,    ifelse( zi==3, 2, 0 ),  1.5) #rnorm(1,    (zi-2),  1)
+  tempu6 <- rnorm(1,    (5-zi),  1)
+  tempu8 <- rnorm(1,    ifelse( zi==3, zi-1, 0 ) + ifelse( zi==1, zi, 0 ),  2)
+  tempu9 <- rnorm(1,    (zi-2),  1)
   
   tempg11 <- rnorm(1,zi * (-1)^(zi+1),1)
   
@@ -149,28 +128,25 @@ for(i in 1:n){
   tempg31 <- rnorm(1,zi * (-1)^(zi),1)
   tempg32 <- rnorm(1,(-1)^(zi),1)
   
-  Xdat[,i] <- c(tempu1, tempu2, tempu3, tempu4, tempu5, tempu6, tempu8, tempu9)
+  Xdat[,i] <- c(tempu1, tempu2, tempu3, tempu5, tempu6, tempu8, tempu9)
   Zdat[,i] <- c( which.max(c(tempg11, 0)), 
                  which.max(c(tempg21, tempg22, 0)),
                  which.max(c(tempg31, tempg32, 0)) )
   
-  # # 80
-  # Ymean1[,i] <- (zi-1) * (1*te+9) + (tempg11/10)*te + (tempu1+tempg22/10) * fval1 + (tempu2+tempg21/10) * fval2 + tempu3 * fval3
-  # Ymean2[,i] <- (zi-2) * (1*te+6) + tempg11/10 + tempu4 * fval4 + (tempu5+tempg31/10) * fval5 + (tempu6+tempg32/10) * fval6 
-  # Ymean3[,i] <- (ifelse(zi==3, zi, -zi+3)-2) * (1*te+8) + tempu8 * fval8 + tempu9 * fval9
+  # 1
+  # Ymean1[,i] <- (tempg11/4)*te + (tempu1+tempg22/5) * fval1 + (tempu2+tempg21/5) * fval2 + tempu3 * fval3
+  # Ymean2[,i] <- tempg11/3 + (tempu6+tempg32/5) * fval6 + (tempu5+tempg31/5) * fval5 
+  # Ymean3[,i] <- zi * (te+1/4) +tempu8 * fval8 + tempu9 * fval9
   
-  # # 83
-  # Ymean1[,i] <- (zi-1) * (1*te+10) + (tempg11/10)*te + (tempu1+tempg22/10) * fval1 + (tempu2+tempg21/10) * fval2 + tempu3 * fval3
-  # Ymean2[,i] <- (zi-2) * (1*te+6) + tempg11/10 + tempu4 * fval4 + (tempu5+tempg31/10) * fval5 + (tempu6+tempg32/10) * fval6 
-  # Ymean3[,i] <- (ifelse(zi==3, zi, -zi+3)-2) * (1*te+9) + tempu8 * fval8 + tempu9 * fval9
+  # asdasd
+  # Ymean1[,i] <- ifelse( zi==2, 2, -1 )*4*te + (tempg11/10)*te + (tempu1+tempg22/10) * fval1 + (tempu2+tempg21/10) * fval2 + tempu3 * fval3
+  # Ymean2[,i] <- ifelse( zi==1, 1, -1 ) * 3 + ifelse( zi==3, 1, 0 ) * 1*te + tempg11/10 + (tempu6+tempg32/10) * fval6 + (tempu5+tempg31/10) * fval5 
+  # Ymean3[,i] <- zi * (3*te+3/2) +tempu8 * fval8 + tempu9 * fval9
   
-  # 83
-  Ymean1[,i] <- (zi-3) * (7*te+5) + (tempg11/10)*te + (tempu1+tempg22/10) * fval1 + (tempu2+tempg21/10) * fval2 + tempu3 * fval3
-  Ymean2[,i] <- (ifelse(zi==1, 3, zi-1)-2) * (3*te+5) + tempg11/10 + tempu4 * fval4 + (tempu5+tempg31/10) * fval5 + (tempu6+tempg32/10) * fval6
-  Ymean3[,i] <- (ifelse(zi==5, 1, zi+2)-2) * (5*te+5) + tempu8 * fval8 + tempu9 * fval9
+  Ymean1[,i] <- ifelse( zi==2, 2, -1 )*4*te + (tempg11/10)*te + (tempu1+tempg22/10) * fval1 + (tempu2+tempg21/10) * fval2 + tempu3 * fval3
+  Ymean2[,i] <- ifelse( zi==1, 1, -1 ) * 3.3 + ifelse( zi==3, 1, 0 ) * 1.1*te + tempg11/10 + (tempu6+tempg32/10) * fval6 + (tempu5+tempg31/10) * fval5 
+  Ymean3[,i] <- zi * (3*te+2.1) +tempu8 * fval8 + tempu9 * fval9
 }
-
-
 
 # for(i in 1:n){ 
 #   
@@ -471,8 +447,6 @@ plot(te, Ydat11[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression
 for(i in 1:n1){ lines(te, Ydat11[,i], col=2) }
 for(i in (1:n2)+n1 ){ lines(te, Ydat11[,i],col=3) }
 for(i in (1:n3)+n1+n2 ){ lines(te, Ydat11[,i], col=4) }
-for(i in (1:n4)+n1+n2+n3 ){ lines(te, Ydat11[,i], col=5) }
-for(i in (1:n5)+n1+n2+n3+n4 ){ lines(te, Ydat11[,i], col=6) }
 # legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3"), col=c(2,3,4), lwd=c(2,2,2), cex=2)
 
 YLIM <- quantile(Ydat22, c(0,1))
@@ -481,8 +455,6 @@ plot(te, Ydat22[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression
 for(i in 1:n1){ lines(te, Ydat22[,i],col=2) }
 for(i in (1:n2)+n1 ){ lines(te, Ydat22[,i],col=3) }
 for(i in (1:n3)+n1+n2 ){ lines(te, Ydat22[,i], col=4) }
-for(i in (1:n4)+n1+n2+n3 ){ lines(te, Ydat22[,i], col=5) }
-for(i in (1:n5)+n1+n2+n3+n4 ){ lines(te, Ydat22[,i], col=6) }
 # legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3"), col=c(2,3,4), lwd=c(2,2,2), cex=2)
 
 YLIM <- quantile(Ydat33, c(0,1))
@@ -491,6 +463,4 @@ plot(te, Ydat33[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression
 for(i in 1:n1){ lines(te, Ydat33[,i],col=2) }
 for(i in (1:n2)+n1 ){ lines(te, Ydat33[,i],col=3) }
 for(i in (1:n3)+n1+n2 ){ lines(te, Ydat33[,i], col=4) }
-for(i in (1:n4)+n1+n2+n3 ){ lines(te, Ydat33[,i], col=5) }
-for(i in (1:n5)+n1+n2+n3+n4 ){ lines(te, Ydat33[,i], col=6) }
 
