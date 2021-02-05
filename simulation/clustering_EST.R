@@ -8,6 +8,7 @@
 # simulation study 1 and 2
 ####################################################################################
 
+# setwd("C:\\Users\\DY\\Desktop\\MFLFM-master\\MFLFMnew\\simulation\\")
 # setwd("C:\\Users\\DY\\Desktop\\MFLFMtest\\MFLFM\\simulationNEW\\")
 
 #####################
@@ -33,14 +34,14 @@ library(gmfd)
 #####################
 # data
 #####################
-filename <- "data\\data1_ss.R"
+filename <- "data\\data1_ww.R"
 
 # "data\\data1_ww.R" week     week
 # "data\\data1_ws.R" week     strong
 # "data\\data1_sw.R" strtong  week
 # "data\\data1_ss.R" strtong  strtong
 
-n <- 100    # 50 100
+n <- 60    # 30 60
 ss <- 100  # 50 100
 
 
@@ -54,11 +55,7 @@ source("functions\\CCR.R")
 # main
 #####################
 
-set.seed(2)
-# (100,100) -> 1 4 7 6
-# (100,50)  -> 1 1 5 4
-# (50,100)  -> 50 8 1 39
-# (50,50)   ->   34 40 2
+set.seed(40)
 
 
 
@@ -263,7 +260,7 @@ par(mar=c(5.1, 5.1, 4.1, 2.1))
 
 cols <- c(2,3,4,5,6)
 
-plot(tobs1[1:nobs[1,1]], msc1[,clusters[1]], type='l', ylim=quantile(Ydat[,1], c(0,1)), main="(m) Case 4: Cluster-specific mean curve - dimension 1", 
+plot(tobs1[1:nobs[1,1]], msc1[,clusters[1]], type='l', ylim=quantile(Ydat[,1], c(0,1)), main="(i) Case 3: Cluster-specific mean curve - dimension 1", 
      ylab=expression(y(v)), xlab=expression(v), cex.main=2, cex.lab=2)
 for(i in sort(unique(clusters2))){ 
   
@@ -273,7 +270,7 @@ for(i in sort(unique(clusters2))){
 }
 
 
-plot(tobs1[1:nobs[1,1]], msc2[,clusters[1]], type='l', ylim=quantile(Ydat[,2], c(0,1)), main="(n) Case 4: Cluster-specific mean curve - dimension 2", 
+plot(tobs1[1:nobs[1,1]], msc2[,clusters[1]], type='l', ylim=quantile(Ydat[,2], c(0,1)), main="(j) Case 3: Cluster-specific mean curve - dimension 2", 
      ylab=expression(y(v)), xlab=expression(v), cex.main=2, cex.lab=2)
 for(i in sort(unique(clusters2))){ 
   
@@ -282,7 +279,7 @@ for(i in sort(unique(clusters2))){
   lines(tobs1[1:nobs[1,1]], msc2_lower[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
 }
 
-plot(tobs1[1:nobs[1,1]], msc3[,clusters[1]], type='l', ylim=quantile(Ydat[,3], c(0,1)), main="(o) Case 4: Cluster-specific mean curve - dimension 3", 
+plot(tobs1[1:nobs[1,1]], msc3[,clusters[1]], type='l', ylim=quantile(Ydat[,3], c(0,1)), main="(k) Case 3: Cluster-specific mean curve - dimension 3", 
      ylab=expression(y(v)), xlab=expression(v), cex.main=2, cex.lab=2)
 for(i in sort(unique(clusters2))){ 
   
@@ -291,7 +288,7 @@ for(i in sort(unique(clusters2))){
   lines( tobs1[1:nobs[1,1]], msc3_lower[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
 }
 
-matrix.heatmap(temp_ppm[order(clusters),order(clusters)], main = "(p) Case 4: Heatmap", cex.main=2)
+matrix.heatmap(temp_ppm[order(clusters),order(clusters)], main = "(l) Case 3: Heatmap", cex.main=2)
 
 
 
@@ -431,6 +428,169 @@ barplot( x, beside=TRUE, ylab='Frequency', col=c(2,3,4,5,6), ylim=c(0,30),
          main = expression("(n) Frequencies of z"[3]) , cex.main=2.5, cex.lab=1.6)
 legend("topleft",c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"), pch=c(15,15,15,15,15), col=c(2,3,4,5,6), cex=1.5 )
 
+
+# par(mar=c(5.1, 5.5, 4.1, 2.1))
+# 
+# cols <- c(2,3,4,5,6)
+# 
+# plot(tobs1[1:nobs[1,1]], msc1[,clusters[1]], type='l', ylim=quantile(Ydat[,1], c(0,1)), main="(a)", 
+#      ylab=expression(y(v)), xlab=expression(v), cex.main=4.5, cex.lab=3, cex.axis=2.5) # a e i m
+# for(i in sort(unique(clusters2))){ 
+#   
+#   lines(tobs1[1:nobs[1,1]], msc1[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=3) 
+#   lines(tobs1[1:nobs[1,1]], msc1_upper[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+#   lines(tobs1[1:nobs[1,1]], msc1_lower[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+# }
+# 
+# 
+# plot(tobs1[1:nobs[1,1]], msc2[,clusters[1]], type='l', ylim=quantile(Ydat[,2], c(0,1)), main="(b)", 
+#      ylab=expression(y(v)), xlab=expression(v), cex.main=4.5, cex.lab=3, cex.axis=2.5) # b f j n 
+# for(i in sort(unique(clusters2))){ 
+#   
+#   lines(tobs1[1:nobs[1,1]], msc2[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=3) 
+#   lines(tobs1[1:nobs[1,1]], msc2_upper[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+#   lines(tobs1[1:nobs[1,1]], msc2_lower[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+# }
+# 
+# plot(tobs1[1:nobs[1,1]], msc3[,clusters[1]], type='l', ylim=quantile(Ydat[,3], c(0,1)), main="(c)", 
+#      ylab=expression(y(v)), xlab=expression(v), cex.main=4.5, cex.lab=3, cex.axis=2.5) # c g k o
+# for(i in sort(unique(clusters2))){ 
+#   
+#   lines( tobs1[1:nobs[1,1]], msc3[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=3) 
+#   lines( tobs1[1:nobs[1,1]], msc3_upper[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+#   lines( tobs1[1:nobs[1,1]], msc3_lower[,clusters[which(clusters2 == i)[1]]], col=cols[i], lwd=1.5, lty=2) 
+# }
+# 
+# matrix.heatmap(temp_ppm[order(clusters),order(clusters)], main = "(d)", cex.main=4.5) # d h l p
+# 
+# 
+# 
+# 
+# 
+# 
+# ######################
+# # functional curve
+# ######################
+# par(mar=c(5.1, 5.1, 4.1, 2.1))
+# YLIM <- quantile(Ydat11, c(0,1))
+# plot(te, Ydat11[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression(v), 
+#      main = "(a)", cex.main=4, cex.lab=2.5, cex.axis=2 )
+# for(i in 1:n1){ lines(te, Ydat11[,i], col=2) }
+# for(i in (1:n2)+n1 ){ lines(te, Ydat11[,i],col=3) }
+# for(i in (1:n3)+n1+n2 ){ lines(te, Ydat11[,i], col=4) }
+# legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3"), col=c(2,3,4), lwd=c(2,2,2), cex=1.5)
+# 
+# YLIM <- quantile(Ydat22, c(0,1))
+# plot(te, Ydat22[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression(v), 
+#      main = "(b)", cex.main=4, cex.lab=2.5, cex.axis=2 )
+# for(i in 1:n1){ lines(te, Ydat22[,i],col=2) }
+# for(i in (1:n2)+n1 ){ lines(te, Ydat22[,i],col=3) }
+# for(i in (1:n3)+n1+n2 ){ lines(te, Ydat22[,i], col=4) }
+# legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3"), col=c(2,3,4), lwd=c(2,2,2), cex=1.5)
+# 
+# YLIM <- quantile(Ydat33, c(0,1))
+# plot(te, Ydat33[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression(v), 
+#      main = "(c)", cex.main=4, cex.lab=2.5, cex.axis=2 )
+# for(i in 1:n1){ lines(te, Ydat33[,i],col=2) }
+# for(i in (1:n2)+n1 ){ lines(te, Ydat33[,i],col=3) }
+# for(i in (1:n3)+n1+n2 ){ lines(te, Ydat33[,i], col=4) }
+# legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3"), col=c(2,3,4), lwd=c(2,2,2), cex=1.5)
+# 
+# 
+# 
+# 
+# 
+# 
+# ######################
+# # covariate
+# ######################
+# par(mfrow=c(3,3), mar=c(5.1, 5.1, 4.1, 2.1))
+# 
+# i <- 1
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3)))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[1]), xlab="", 
+#         main="(d)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 2
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3) ))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[2]), xlab="", 
+#         main="(e)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 3
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3) ))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[3]), xlab="", 
+#         main="(f)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 4
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3)) )
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[4]), xlab="", 
+#         main="(g)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 5
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3) ))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[5]), xlab="", 
+#         main="(h)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 6
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3) ))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[6]), xlab="", 
+#         main="(i)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# i <- 7
+# DIM <- i
+# temp <- Xdat[DIM,]
+# temp2 <- as.factor(c(rep("Cluster 1", n1), rep("Cluster 2", n2), rep("Cluster 3", n3) ))
+# temptemp <- data.frame(x=temp, y=temp2)
+# boxplot(temp ~ temp2, data = temptemp, col=c(2,3,4), ylab=expression("U"[7]), xlab="", 
+#         main="(j)", cex.main=2.5, cex.lab=2, cex.axis=1.5)
+# 
+# dev.off()
+# 
+# 
+# 
+# par(mar=c(5.1, 5.5, 4.1, 2.1))
+# j <- 1
+# x <- t(table( Zdat[j,], rep(c(1,2,3),c(n1,n2,n3)) ))
+# 
+# colnames(x) <- c("1", "2")
+# barplot( x, beside=TRUE, ylab='Frequency', col=c(2,3,4), ylim=c(0,30), 
+#          main = "(k)" , cex.main=4.5, cex.lab=3, cex.axis=2)
+# legend("topleft",c("Cluster 1", "Cluster 2", "Cluster 3"), pch=c(15,15,15), col=c(2,3,4), cex=3 )
+# 
+# j <- 2
+# x <- t(table( Zdat[j,], rep(c(1,2,3),c(n1,n2,n3)) ))
+# 
+# colnames(x) <- c("1", "2", "3")
+# barplot( x, beside=TRUE, ylab='Frequency', col=c(2,3,4), ylim=c(0,30), 
+#          main = "(l)" , cex.main=4.5, cex.lab=3, cex.axis=2)
+# legend("topleft",c("Cluster 1", "Cluster 2", "Cluster 3"), pch=c(15,15,15), col=c(2,3,4), cex=3 )
+# 
+# j <- 3
+# x <- t(table( Zdat[j,], rep(c(1,2,3),c(n1,n2,n3)) ))
+# 
+# colnames(x) <- c("1", "2", "3")
+# barplot( x, beside=TRUE, ylab='Frequency', col=c(2,3,4), ylim=c(0,30), 
+#          main = "(m)" , cex.main=4.5, cex.lab=3, cex.axis=2)
+# legend("topleft",c("Cluster 1", "Cluster 2", "Cluster 3"), pch=c(15,15,15), col=c(2,3,4), cex=3 )
+# 
 
 
 

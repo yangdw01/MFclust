@@ -8,6 +8,7 @@
 # simulation study 1 and 2
 ####################################################################################
 
+# setwd("C:\\Users\\DY\\Desktop\\MFLFM-master\\MFLFMnew\\simulation\\")
 # setwd("C:\\Users\\DY\\Desktop\\MFLFMtest\\MFLFM\\simulationNEW\\")
 
 
@@ -36,15 +37,15 @@ library(gmfd)
 #####################
 # data
 #####################
-filename <- "data\\data1.R"
+filename <- "data\\data1_ww.R"
 
 # "data\\data1_ww.R" week     week
 # "data\\data1_ws.R" week     strong
 # "data\\data1_sw.R" strtong  week
 # "data\\data1_ss.R" strtong  strtong
 
-n <- 100 # 50 100
-ss <- 100  # 40 100
+n <- 60    # 30 60
+ss <- 100  # 50 100
 
 
 #####################
@@ -63,7 +64,7 @@ burn <- 10000
 thin <- 1
 burnthin <- seq(burn+1, niter, thin)-1
 
-NUM <- 100
+NUM <- 50
 
 MFLFM1result <- kmeans_result1 <- kmeans_result2 <- 
   MFLFM0result <- gmfd_result <- Funclust_result <- 
@@ -105,32 +106,6 @@ for(qwe in 1:NUM){
 
 Sys.time()
 
-# # case 2 - PCA + Kmeans
-# for(qwe in 1:NUM){
-#   
-#   set.seed(qwe)
-#   
-#   # data generation
-#   source(filename)
-#   
-#   tempcoef <- matrix( NA, n, sum(sapply(Bcs, function(x){ dim(x)[2] })) )
-#   tempnobs <- nobs[[1]]
-#   tempnobs_ind <- cumsum(c(0,tempnobs))
-#   
-#   for(i in 1:n){
-#     
-#     temptempcoef <- NULL
-#     tempiind <- (tempnobs_ind[i]+1):tempnobs_ind[i+1]
-#     for(ii in 1:cc){ temptempcoef <- c(temptempcoef, lm( Ydat[[ii]][tempiind] ~ 0 + Bcs[[ii]][tempiind,] )$coefficients) }
-#     
-#     tempcoef[i,] <- temptempcoef
-#   }
-#   
-#   kmeans1 <- kmeans(tempcoef, 3, nstart = 20)
-#   
-#   kmeans_result1[qwe,] <- kmeans1$cluster
-# }
-
 
 # case 3 - Kmeans
 for(qwe in 1:NUM){
@@ -140,24 +115,23 @@ for(qwe in 1:NUM){
   # data generation
   source(filename)
   
-  tempcoef <- matrix( NA, n, sum(sapply(Bcs, function(x){ dim(x)[2] })) )
-  tempnobs <- nobs[[1]]
-  tempnobs_ind <- cumsum(c(0,tempnobs))
   
-  for(i in 1:n){
-    
-    temptempcoef <- NULL
-    tempiind <- (tempnobs_ind[i]+1):tempnobs_ind[i+1]
-    for(ii in 1:cc){ temptempcoef <- c(temptempcoef, lm( Ydat[[ii]][tempiind] ~ 0 + Bcs[[ii]][tempiind,] )$coefficients) }
-    
-    tempcoef[i,] <- temptempcoef
-  }
+  Ydat11 <- matrix(Ydat[[1]], length(te), n)
+  Ydat22 <- matrix(Ydat[[2]], length(te), n)
+  Ydat33 <- matrix(Ydat[[3]], length(te), n)
   
-  kmeans2 <- kmeans(cbind(tempcoef, t(Xdat)), 5, nstart = 20)
+  CWtime <- te
+  CWrange <- c(0,1)
+  CWbasis <- create.bspline.basis(CWrange, nbasis=10)
+  
+  CWfd1 <- smooth.basisPar( CWtime, Ydat11, CWbasis, lambda=1e-2)$fd
+  CWfd2 <- smooth.basisPar( CWtime, Ydat22, CWbasis, lambda=1e-2)$fd
+  CWfd3 <- smooth.basisPar( CWtime, Ydat33, CWbasis, lambda=1e-2)$fd
+  
+  kmeans2 <- kmeans(cbind(t(rbind(CWfd1$coefs,CWfd2$coefs,CWfd3$coefs)), t(Xdat)), 3, nstart = 20)
   
   kmeans_result2[qwe,] <- kmeans2$cluster
 }
-
 
 
 
@@ -208,12 +182,12 @@ for(qwe in 1:NUM){
   source(filename)
   tempFD <- funData( tobs[[1]][seq(nobs[[1]][1])], list(t(matrix(Ydat[[1]], ss, n)), t(matrix(Ydat[[2]], ss, n)), t(matrix(Ydat[[3]], ss, n))) )
   
-  try({
-    
-    mod1 <- gmfd_kmeans(tempFD, n.cl = 5, metric = metrics[1], p = 10^6)
-    gmfd_result[qwe,] <- mod1$cluster
-    
-  }, silent=TRUE)
+  qwe
+  mod1 <- gmfd_kmeans(tempFD, n.cl = 3, metric = metrics[1], p = 10^6)
+  # mod3 <- gmfd_kmeans(tempFD, n.cl = 3, metric = metrics[3], p = NULL, k_trunc = NULL)
+  
+  gmfd_result[qwe,] <- mod1$cluster
+  # gmfd_result3[qwe,] <- mod3$cluster
 }
 
 # case 3 - Funclust
@@ -280,7 +254,7 @@ for(qwe in 1:NUM){
   
   # data generation
   source(filename)
-  kmeans1 <- kmeans(t(Xdat), 5, nstart = 20)
+  kmeans1 <- kmeans(t(Xdat), 3, nstart = 20)
   
   kmeans_result3[qwe,] <- kmeans1$cluster
 }
@@ -295,7 +269,7 @@ for(qwe in 1:NUM){
 ###################
 # result
 ###################
-true_cluster <- truezs
+true_cluster <- c( rep(1,n1), rep(2, n2), rep(3,n3) )
 
 m1_rate1 <- CCRcomplete(MFLFM1result, true_cluster)
 m1_rate2 <- CCRcomplete(kmeans_result2, true_cluster)

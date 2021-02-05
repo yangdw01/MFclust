@@ -33,7 +33,7 @@ library(RcppArmadillo)
 #####################
 # data
 #####################
-filename <- "data\\data2_ww.R"
+filename <- "data\\data2_ws.R"
 
 # "data\\data2_ww.R" week     week
 # "data\\data2_ws.R" week     strong
@@ -56,7 +56,7 @@ source("functions\\CCR.R")
 # main
 #####################
 
-set.seed(1) # 1 100 1 1
+set.seed(100) # 1 100 1 1
 
 # iteration
 niter <- 20000; 
@@ -260,7 +260,23 @@ for(w in 1:length(unique(clusters))){ clusters2[clusters == unique(clusters)[w]]
 #######################
 cols <- c(3,2,4,6,5)
 
-plot(tobs1[1:nobs[1,1]], msc1[,1], type='l', ylim=quantile(Ydat[,1], c(0,1)), main="(j) Case 4: Cluster-specific mean curve - dimension 1", 
+# (a) fWeak-coWeak
+# (b) fWeak-coWeak
+# (c) fWeak-coWeak
+
+# (d) fWeak-coStrong
+# (e) fWeak-coStrong
+# (f) fWeak-coStrong
+
+# (g) fStrong-coWeak
+# (h) fStrong-coWeak
+# (i) fStrong-coWeak
+
+# (j) fStrong-coStrong
+# (k) fStrong-coStrong
+# (l) fStrong-coStrong
+
+plot(tobs1[1:nobs[1,1]], msc1[,1], type='l', ylim=quantile(Ydat[,1], c(0,1)), main="(j) fStrong-coStrong: Cluster-specific mean curve - dimension 1", 
      ylab=expression(y(v)), xlab=expression(v), cex.main=2, cex.lab=1.5 )
 for(i in sort(unique(clusters2))){ 
   
@@ -270,7 +286,7 @@ for(i in sort(unique(clusters2))){
 }
 legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"), col=c(2,3,4,5,6), lwd=c(2,2,2), cex=1.4)
 
-plot(tobs1[1:nobs[1,1]], msc2[,1], type='l', ylim=quantile(Ydat[,2], c(0,1)), main="(k) Case 4: Cluster-specific mean curve - dimension 2", 
+plot(tobs1[1:nobs[1,1]], msc2[,1], type='l', ylim=quantile(Ydat[,2], c(0,1)), main="(k) fStrong-coStrong: Cluster-specific mean curve - dimension 2", 
      ylab=expression(y(v)), xlab=expression(v), cex.main=2, cex.lab=1.5)
 for(i in sort(unique(clusters2))){ 
   
@@ -280,7 +296,7 @@ for(i in sort(unique(clusters2))){
 }
 legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"), col=c(2,3,4,5,6), lwd=c(2,2,2), cex=1.4)
 
-matrix.heatmap(temp_ppm[order(clusters),order(clusters)], main="(l) Case 4: Heatmap", cex.main=2)
+matrix.heatmap(temp_ppm[order(clusters),order(clusters)], main="(l) fStrong-coStrong: Heatmap", cex.main=2)
 
 # YLIM <- quantile(Ydat11, c(0,1))
 # plot(te, Ydat11[,1], type='l', ylim=YLIM, ylab=expression(y(v)), xlab=expression(v), 
@@ -461,4 +477,44 @@ for(i in 1:30){ lines(te, Ydat22[,ttind[i]], col=tt_zs[i]) }
 legend("topleft", c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"), col=c(2,3,4,5,6), lwd=c(2,2,2), cex=1.4)
 
 
+CCR(c(clusters),truezs)
 
+
+
+
+
+dev.off()
+
+tt <- 1
+ttind <- 1:nn + nn*(tt-1)
+tt_zs1 <- truezs[ttind] + 1
+
+tt <- 2
+ttind <- 1:nn + nn*(tt-1)
+tt_zs2 <- truezs[ttind] + 1
+
+tt <- 3
+ttind <- 1:nn + nn*(tt-1)
+tt_zs3 <- truezs[ttind] + 1
+
+tt <- 4
+ttind <- 1:nn + nn*(tt-1)
+tt_zs4 <- truezs[ttind] + 1
+
+
+table(tt_zs1)
+table(tt_zs2)
+table(tt_zs3)
+table(tt_zs4)
+
+
+zstab <- rbind( table(tt_zs1), table(tt_zs2), table(tt_zs3), table(tt_zs4) )
+
+par(mar=c(5.1,7,4.1,2.1))
+
+ylim <- quantile(zstab, c(0,1))
+plot( 1:4, zstab[,1], type='b', col=2, lwd=3, ylim=ylim, xaxt='n', xlab="", ylab=expression('n'[k]^t), main="(o)", cex.main=4, cex.lab=3, cex.axis=2.5 )
+axis(1, 1:4, c( expression("t=1"), expression("t=2"), expression("t=3"), expression("t=4") ), labels = F)
+text(1:4, par("usr")[3] - 0.2, labels = c( expression("t=1"), expression("t=2"), expression("t=3"), expression("t=4") ), pos = 1, xpd = TRUE, cex=3)
+for(i in 1:5){ lines( 1:4, zstab[,i], type='b', col=i+1, lwd=3) }
+legend(3.1,13.3, legend = c("cluster 1", "cluster 2", "cluster 3", "cluster 4", "cluster 5"), col=c(2,4,3,5,6), lwd=3, cex=1.3)

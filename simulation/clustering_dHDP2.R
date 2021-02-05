@@ -9,10 +9,8 @@
 ####################################################################################
 # dynamic clustering model using dDHP
 ####################################################################################
-# For DP models
-####################################################################################
 
-# setwd("C:\\Users\\DY\\Desktop\\MFLFM-master\\MFLFMnew\\simulation\\")
+# setwd("C:\\Users\\DY\\Desktop\\MFLFMtest\\MFLFM\\simulationNEW\\")
 
 timer0 <- proc.time()[3]
 
@@ -65,7 +63,7 @@ burn <- 10000
 thin <- 1
 burnthin <- seq(burn+1, niter, thin)-1
 
-NUM <- 100 
+NUM <- 50
 n <- nn*TT
 
 dHDP_MFLFM1result <- MFLFM1result <- kmeans_result1 <- kmeans_result2 <- 
@@ -140,7 +138,7 @@ for(qwe in 1:NUM){
   # data generation
   source(filename)
   
-  tempcoef <- matrix( NA, n, sum(sapply(Bcs, function(x){ dim(x)[2] })) )
+  tempcoef <- NULL
   tempnobs <- nobs[[1]]
   tempnobs_ind <- cumsum(c(0,tempnobs))
   
@@ -148,9 +146,9 @@ for(qwe in 1:NUM){
     
     temptempcoef <- NULL
     tempiind <- (tempnobs_ind[i]+1):tempnobs_ind[i+1]
-    for(ii in 1:cc){ temptempcoef <- c(temptempcoef, lm( Ydat[[ii]][tempiind] ~ 0 + Bcs[[ii]][tempiind,] )$coefficients) }
+    for(ii in 1:cc){ temptempcoef <- c(temptempcoef, lm( Ydat[[ii]][tempiind] ~ bs(te, 10) )$coefficients) }
     
-    tempcoef[i,] <- temptempcoef
+    tempcoef <- rbind(tempcoef, temptempcoef)
   }
   
   kmeans2 <- kmeans(cbind(tempcoef, t(Xdat)), 5, nstart = 20)
@@ -227,12 +225,12 @@ for(qwe in 1:NUM){
   source(filename)
   tempFD <- funData( tobs[[1]][seq(nobs[[1]][1])], list(t(matrix(Ydat[[1]], ss, n)), t(matrix(Ydat[[2]], ss, n))) )
   
-  try({
-    
-    mod1 <- gmfd_kmeans(tempFD, n.cl = 5, metric = metrics[1], p = 10^6)
-    gmfd_result[qwe,] <- mod1$cluster
-    
-  }, silent=TRUE)
+  qwe
+  mod1 <- gmfd_kmeans(tempFD, n.cl = 5, metric = metrics[1], p = 10^6)
+  # mod3 <- gmfd_kmeans(tempFD, n.cl = 3, metric = metrics[3], p = NULL, k_trunc = NULL)
+  
+  gmfd_result[qwe,] <- mod1$cluster
+  # gmfd_result3[qwe,] <- mod3$cluster
 }
 
 # case 4 - Funclust
@@ -378,16 +376,5 @@ colnames(rate) <- c("MF-LFM1", "K-means", "",
                     "MF-LFM0", "GMFD", "Funclust", "",  
                     "K-means0")
 
-boxplot(rate, main = "", ylab="Correct Classification Rate (%)", xaxt='n')
+boxplot(rate, main = "", ylab="CCR (%)", xaxt='n')
 axis(side=1, at=which(!is.na(rate[1,])), labels=colnames(rate)[!is.na(rate[1,])])
-
-
-
-
-
-# save(MFLFM1result, file="MFLFM1result.RData")
-# save(MFLFM0result, file="MFLFM0result.RData")
-# save(kmeans_result2, file="kmeans_result2.RData")
-# save(kmeans_result3, file="kmeans_result3.RData")
-# save(Funclust_result, file="Funclust_result.RData")
-# save(gmfd_result, file="gmfd_result.RData")
