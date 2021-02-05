@@ -1,6 +1,6 @@
 rm(list=ls())
 
-# setwd("C:\\Users\\DY\\Desktop\\MFLFM-master\\MFLFMnew\\application\\application2\\")
+setwd("C:\\Users\\DY\\Desktop\\MFLFM-master\\MFLFMnew\\application\\application2\\")
 
 library(mvtnorm)
 library(fda)
@@ -384,8 +384,8 @@ containMULT <- ifelse( length(funname)==1, 0, 1 )
 cov_list <- geo_list
 Xdat <- t( mcc.indicators[all_citynum_mcc,cov_list] )
 
-set.seed(13200) # 13100 54 16 104 4
-source("preprocess.R")
+set.seed(5004) # 5001 5004 5011 5019 5020 5044
+source("preprocess_dHDP.R")
 
 
 
@@ -701,3 +701,7 @@ for(i in sort(unique(clusters2))){
   lines(msc2_upper[,clusters[which(clusters2 == i)[1]]], col=i, lwd=1.5, lty=2) 
   lines(msc2_lower[,clusters[which(clusters2 == i)[1]]], col=i, lwd=1.5, lty=2) 
 }
+
+matrix.heatmap(temp_ppm[order(clusters),order(clusters)])
+
+length( unique(clusters) )
